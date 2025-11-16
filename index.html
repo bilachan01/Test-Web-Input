@@ -458,42 +458,7 @@
     </div>
 
     <script>
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyDHlyHNXsk-eGHQ1gTwakKY9ah5-5Iig9BywYPpPDRTZWQddAiAbSkSTSIX3CFv5SfqA/exec';
-
-    function submitToGoogleApps(data) {
-        return new Promise((resolve, reject) => {
-            // Create JSONP request
-            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-            const script = document.createElement('script');
-            
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                document.body.removeChild(script);
-                resolve(data);
-            };
-            
-            const url = GOOGLE_SCRIPT_URL + '?callback=' + callbackName + 
-                       '&judulLagu=' + encodeURIComponent(data.judulLagu) +
-                       '&namaArtis=' + encodeURIComponent(data.namaArtis) +
-                       '&durasiTiktok=' + encodeURIComponent(data.durasiTiktok) +
-                       '&artisFeat=' + encodeURIComponent(data.artisFeat) +
-                       '&linkYoutube=' + encodeURIComponent(data.linkYoutube) +
-                       '&fotoName=' + encodeURIComponent(data.fotoName) +
-                       '&audioName=' + encodeURIComponent(data.audioName);
-            
-            script.src = url;
-            document.body.appendChild(script);
-            
-            // Timeout fallback
-            setTimeout(() => {
-                if (window[callbackName]) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    reject(new Error('Timeout'));
-                }
-            }, 10000);
-        });
-    }
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxO_ryHF_hBxADu0JO-7Z-Yg7pl9tnmc4y96K-VIO10uLLUlUEYXYek7UfYAiMrFt2YlQ/exec';
 
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -523,26 +488,32 @@
         loading.style.display = 'block';
         
         try {
-            const formData = {
-                judulLagu: judulLagu,
-                namaArtis: namaArtis,
-                durasiTiktok: durasiTiktok,
-                artisFeat: document.getElementById('artisFeat').value.trim(),
-                linkYoutube: document.getElementById('linkYoutube').value.trim(),
-                fotoName: fotoCover.name,
-                audioName: fileAudio.name
-            };
+            // Pakai FormData untuk support file upload
+            const formData = new FormData();
+            formData.append('judulLagu', judulLagu);
+            formData.append('namaArtis', namaArtis);
+            formData.append('durasiTiktok', durasiTiktok);
+            formData.append('artisFeat', document.getElementById('artisFeat').value);
+            formData.append('linkYoutube', document.getElementById('linkYoutube').value);
+            formData.append('fotoCover', fotoCover);
+            formData.append('fileAudio', fileAudio);
             
-            console.log('📤 Mengirim data:', formData);
+            console.log('📤 Mengirim file...');
             
-            const result = await submitToGoogleApps(formData);
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
             console.log('✅ Response:', result);
             
             if (result.status === 'success') {
                 successMessage.innerHTML = `
                     <i class="fas fa-check-circle"></i> ${result.message}<br>
-                    <small>📁 ${result.folderName}</small>
-                    ${result.folderUrl ? `<br><a href="${result.folderUrl}" target="_blank" style="color: #155724;">🔗 Buka di Google Drive</a>` : ''}
+                    <small>📁 Folder: <a href="${result.folderUrl}" target="_blank">Buka di Google Drive</a></small><br>
+                    <small>🖼️ Foto: ${result.files.foto ? '✅' : '❌'}</small><br>
+                    <small>🎧 Audio: ${result.files.audio ? '✅' : '❌'}</small>
                 `;
                 successMessage.style.display = 'block';
                 document.getElementById('uploadForm').reset();
@@ -552,7 +523,16 @@
             
         } catch (error) {
             console.error('❌ Error:', error);
-            showError('Gagal mengirim data: ' + error.message);
+            
+            if (error.message.includes('Failed to fetch')) {
+                showError(`
+                    <strong>CORS Error!</strong><br>
+                    <small>File upload butuh POST request yang diblokir CORS.</small><br>
+                    <small>Solusi: Deploy HTML di Google Apps Script juga.</small>
+                `);
+            } else {
+                showError('Error: ' + error.message);
+            }
         } finally {
             loading.style.display = 'none';
             submitBtn.disabled = false;
@@ -564,19 +544,6 @@
         errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
         errorMessage.style.display = 'block';
     }
-    
-    // Animasi
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.querySelector('.container');
-        container.style.opacity = '0';
-        container.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            container.style.transition = 'all 0.6s ease';
-            container.style.opacity = '1';
-            container.style.transform = 'translateY(0)';
-        }, 200);
-    });
 </script>
 </body>
 </html>
