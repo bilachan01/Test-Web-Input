@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Upload Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 40px;
+            color: #667eea;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        .rules-section {
+            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .rules-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rules-list {
+            list-style: none;
+        }
+        
+        .rules-list li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .rules-list li i {
+            color: #28a745;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        
+        .input-description {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+        
+        input[type="text"], input[type="url"], input[type="file"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .file-input-info {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            display: none;
+            padding: 16px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer-name {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 16px;
+        }
+        
+        .footer-tagline {
+            font-size: 12px;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header dengan Logo -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-music logo-icon"></i>
+                <h1 class="title">Music Upload Portal</h1>
+            </div>
+            <p class="subtitle">Upload dan kelola musik Anda dengan mudah</p>
+        </div>
+        
+        <!-- Section Peraturan -->
+        <div class="rules-section">
+            <h3 class="rules-title">
+                <i class="fas fa-exclamation-circle"></i>
+                Peraturan & Panduan Upload
+            </h3>
+            <ul class="rules-list">
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Pastikan Anda memiliki hak cipta atas lagu yang diupload</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>File audio harus dalam format MP3 atau WAV dengan kualitas baik</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Foto cover art harus beresolusi minimal 500x500 pixel</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Durasi TikTok mengacu pada bagian lagu yang cocok untuk video pendek</span>
+                </li>
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <span>Data akan langsung tersimpan di Google Drive pemilik</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Form -->
+        <form id="uploadForm">
+            <!-- Judul Lagu -->
+            <div class="form-group">
+                <label class="input-label">Judul Lagu *</label>
+                <span class="input-description">
+                    <i class="fas fa-info-circle"></i> Ketik judul lagu lengkap tanpa singkatan. Contoh: "Melangkah di Atas Awan - Original Version"
+                </span>
+                <input type="text" id="judulLagu" name="judulLagu" required placeholder="Masukkan judul lagu lengkap">
+            </div>
+            
+            <!-- Nama Artis -->
+            <div class="form-group">
+                <label class="input-label">Nama Artis *</label>
+                <span class="input-description">
+                    <i class="fas fa-user"></i> Nama artis atau band utama pembuat lagu
+                </span>
+                <input type="text" id="namaArtis" name="namaArtis" required placeholder="Nama artis atau band">
+            </div>
+            
+            <!-- Durasi TikTok -->
+            <div class="form-group">
+                <label class="input-label">Durasi Bagian TikTok *</label>
+                <span class="input-description">
+                    <i class="fas fa-clock"></i> Tentukan bagian lagu (detik awal - detik akhir) yang cocok untuk video TikTok. Contoh: "0:30-0:45" untuk 15 detik
+                </span>
+                <input type="text" id="durasiTiktok" name="durasiTiktok" required placeholder="Contoh: 0:30-0:45">
+            </div>
+            
+            <!-- Artis Feat -->
+            <div class="form-group">
+                <label class="input-label">Artis Feat (Jika Ada)</label>
+                <span class="input-description">
+                    <i class="fas fa-users"></i> Nama artis tambahan yang berkolaborasi dalam lagu ini
+                </span>
+                <input type="text" id="artisFeat" name="artisFeat" placeholder="Nama artis feat (opsional)">
+            </div>
+            
+            <!-- Link YouTube -->
+            <div class="form-group">
+                <label class="input-label">Link YouTube</label>
+                <span class="input-description">
+                    <i class="fab fa-youtube"></i> Paste link YouTube official lagu (jika ada)
+                </span>
+                <input type="url" id="linkYoutube" name="linkYoutube" placeholder="https://youtube.com/watch?v=...">
+            </div>
+            
+            <!-- Upload Foto -->
+            <div class="form-group">
+                <label class="input-label">Upload Foto Cover Art *</label>
+                <span class="input-description">
+                    <i class="fas fa-image"></i> Pilih foto cover art untuk lagu. Format: JPG/PNG, min. 500x500px
+                </span>
+                <input type="file" id="fotoCover" name="fotoCover" accept="image/*" required>
+                <div class="file-input-info">Format: JPG, PNG, JPEG | Maksimal: 5MB</div>
+            </div>
+            
+            <!-- Upload File Audio -->
+            <div class="form-group">
+                <label class="input-label">Upload File Audio *</label>
+                <span class="input-description">
+                    <i class="fas fa-file-audio"></i> Pilih file audio lagu dalam format MP3 atau WAV
+                </span>
+                <input type="file" id="fileAudio" name="fileAudio" accept="audio/mp3,audio/wav,audio/mpeg" required>
+                <div class="file-input-info">Format: MP3, WAV | Maksimal: 20MB</div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-cloud-upload-alt"></i> UPLOAD KE GOOGLE DRIVE
+            </button>
+        </form>
+        
+        <!-- Loading & Messages -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Mengupload file ke Google Drive...</p>
+        </div>
+        
+        <div class="message success" id="successMessage">
+            <i class="fas fa-check-circle"></i> File berhasil diupload! Data sudah tersimpan di Google Drive.
+        </div>
+        
+        <div class="message error" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i> Terjadi kesalahan saat mengupload file.
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-name">Dibuat dengan ❤️ oleh [Nama Anda]</div>
+            <div class="footer-tagline">Music Upload Portal &copy; 2024 - All rights reserved</div>
+        </div>
+    </div>
+
+    <script>
+        // URL Google Apps Script - SUDAH DIUPDATE
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT_ScLYh3YXyQQoh4Mh_NY7mx7ChZzRnaLQMiqsV8DySWtCcrtjdwcvEjcT8qX1dNf4Q/exec';
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Sembunyikan pesan sebelumnya
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Validasi
+            const judulLagu = document.getElementById('judulLagu').value;
+            const namaArtis = document.getElementById('namaArtis').value;
+            const durasiTiktok = document.getElementById('durasiTiktok').value;
+            const fotoCover = document.getElementById('fotoCover').files[0];
+            const fileAudio = document.getElementById('fileAudio').files[0];
+            
+            if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
+                showError('Harap isi semua field yang diperlukan!');
+                return;
+            }
+            
+            if (fotoCover && fotoCover.size > 5 * 1024 * 1024) {
+                showError('File foto terlalu besar! Maksimal 5MB.');
+                return;
+            }
+            
+            if (fileAudio && fileAudio.size > 20 * 1024 * 1024) {
+                showError('File audio terlalu besar! Maksimal 20MB.');
+                return;
+            }
+            
+            // Tampilkan loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('judulLagu', judulLagu);
+                formData.append('namaArtis', namaArtis);
+                formData.append('durasiTiktok', durasiTiktok);
+                formData.append('artisFeat', document.getElementById('artisFeat').value);
+                formData.append('linkYoutube', document.getElementById('linkYoutube').value);
+                formData.append('fotoCover', fotoCover);
+                formData.append('fileAudio', fileAudio);
+                formData.append('timestamp', new Date().toISOString());
+                
+                // Send to Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    successMessage.style.display = 'block';
+                    document.getElementById('uploadForm').reset();
+                } else {
+                    throw new Error(result.message || 'Upload gagal');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Terjadi kesalahan saat mengupload');
+            } finally {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            errorMessage.style.display = 'block';
+        }
+        
+        // Animasi saat halaman load
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 200);
+        });
+    </script>
+</body>
+</html>
