@@ -458,119 +458,92 @@
     </div>
 
     <script>
-        // URL Google Apps Script BARU
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDZbZtYeNQmnJROQLMNT0b711m32T-zGWFHBMY_mOg7vE_jG0GQiUN51pb2H-_g-Aw7w/exec';
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxSeMB8Uvp8FDWB1RAlfp87-Msy7Pjs-fjN18zmipGZF8UU9erlwIIDvOZHKX6jwq860w/exec';
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        // CORS Proxy untuk bypass CORS block
-        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
-            
-            // Validasi
-            const judulLagu = document.getElementById('judulLagu').value.trim();
-            const namaArtis = document.getElementById('namaArtis').value.trim();
-            const durasiTiktok = document.getElementById('durasiTiktok').value.trim();
-            const fotoCover = document.getElementById('fotoCover').files[0];
-            const fileAudio = document.getElementById('fileAudio').files[0];
-            
-            if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
-                showError('Harap isi semua field yang diperlukan!');
-                return;
-            }
-
-            // Validasi ukuran file
-            if (fotoCover.size > 5 * 1024 * 1024) {
-                showError('File foto terlalu besar! Maksimal 5MB.');
-                return;
-            }
-            
-            if (fileAudio.size > 20 * 1024 * 1024) {
-                showError('File audio terlalu besar! Maksimal 20MB.');
-                return;
-            }
-
-            // Tampilkan loading
-            submitBtn.disabled = true;
-            loading.style.display = 'block';
-            
-            try {
-                // Kirim data sebagai URL parameters via CORS proxy
-                const params = new URLSearchParams({
-                    judulLagu: judulLagu,
-                    namaArtis: namaArtis,
-                    durasiTiktok: durasiTiktok,
-                    artisFeat: document.getElementById('artisFeat').value.trim(),
-                    linkYoutube: document.getElementById('linkYoutube').value.trim(),
-                    fotoName: fotoCover.name,
-                    audioName: fileAudio.name,
-                    timestamp: new Date().toISOString()
-                });
-                
-                console.log('📤 Mengirim data via CORS proxy...');
-                
-                const response = await fetch(CORS_PROXY + GOOGLE_SCRIPT_URL + '?' + params, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                const result = await response.json();
-                console.log('✅ Response:', result);
-                
-                if (result.status === 'success') {
-                    successMessage.innerHTML = `
-                        <i class="fas fa-check-circle"></i> ${result.message}<br>
-                        <small>📁 Folder: <a href="${result.folderUrl}" target="_blank">${result.folderName}</a></small><br>
-                        <small>📝 Data lengkap tersimpan di file "Data Lagu.txt"</small>
-                    `;
-                    successMessage.style.display = 'block';
-                    document.getElementById('uploadForm').reset();
-                } else {
-                    throw new Error(result.message || 'Upload gagal');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error:', error);
-                
-                if (error.message.includes('Failed to fetch')) {
-                    showError('CORS proxy error. Coba refresh halaman dan submit lagi.');
-                } else {
-                    showError('Error: ' + error.message);
-                }
-            } finally {
-                loading.style.display = 'none';
-                submitBtn.disabled = false;
-            }
-        });
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
         
-        function showError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Validasi
+        const judulLagu = document.getElementById('judulLagu').value.trim();
+        const namaArtis = document.getElementById('namaArtis').value.trim();
+        const durasiTiktok = document.getElementById('durasiTiktok').value.trim();
+        const fotoCover = document.getElementById('fotoCover').files[0];
+        const fileAudio = document.getElementById('fileAudio').files[0];
+        
+        if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
+            showError('Harap isi semua field yang diperlukan!');
+            return;
         }
+
+        // Tampilkan loading
+        submitBtn.disabled = true;
+        loading.style.display = 'block';
         
-        // Animasi
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
+        try {
+            // Pakai FormData untuk support file upload
+            const formData = new FormData();
+            formData.append('judulLagu', judulLagu);
+            formData.append('namaArtis', namaArtis);
+            formData.append('durasiTiktok', durasiTiktok);
+            formData.append('artisFeat', document.getElementById('artisFeat').value);
+            formData.append('linkYoutube', document.getElementById('linkYoutube').value);
+            formData.append('fotoCover', fotoCover);
+            formData.append('fileAudio', fileAudio);
             
-            setTimeout(() => {
-                container.style.transition = 'all 0.6s ease';
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 200);
-        });
-    </script>
+            console.log('📤 Mengirim file...');
+            
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            console.log('✅ Response:', result);
+            
+            if (result.status === 'success') {
+                successMessage.innerHTML = `
+                    <i class="fas fa-check-circle"></i> ${result.message}<br>
+                    <small>📁 Folder: <a href="${result.folderUrl}" target="_blank">Buka di Google Drive</a></small><br>
+                    <small>🖼️ Foto: ${result.files.foto ? '✅' : '❌'}</small><br>
+                    <small>🎧 Audio: ${result.files.audio ? '✅' : '❌'}</small>
+                `;
+                successMessage.style.display = 'block';
+                document.getElementById('uploadForm').reset();
+            } else {
+                throw new Error(result.message || 'Upload gagal');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error:', error);
+            
+            if (error.message.includes('Failed to fetch')) {
+                showError(`
+                    <strong>CORS Error!</strong><br>
+                    <small>File upload butuh POST request yang diblokir CORS.</small><br>
+                    <small>Solusi: Deploy HTML di Google Apps Script juga.</small>
+                `);
+            } else {
+                showError('Error: ' + error.message);
+            }
+        } finally {
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    });
+    
+    function showError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+        errorMessage.style.display = 'block';
+    }
+</script>
 </body>
 </html>
