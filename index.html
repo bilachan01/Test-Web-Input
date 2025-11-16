@@ -385,105 +385,137 @@
     </div>
 
     <script>
-        // URL Google Apps Script - SUDAH DIUPDATE DENGAN URL BARU
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNvQ8LOZpX5MKfH9fGQFyoXiDtrSQ6JDrzV4fQnzzeH9z35sMRB8sFeqoUKSoKYO0Cfw/exec';
+    // URL Google Apps Script - SUDAH DIUPDATE DENGAN URL BARU
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYR625KOyroibXfGvBUf5qD_hm9CDOpRvmAZJObzLNlcq4VLMrJ4Nzx2xcUWxc5m7ZQw/exec';
 
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const loading = document.getElementById('loading');
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Sembunyikan pesan sebelumnya
-            successMessage.style.display = 'none';
-            errorMessage.style.display = 'none';
-            
-            // Validasi
-            const judulLagu = document.getElementById('judulLagu').value;
-            const namaArtis = document.getElementById('namaArtis').value;
-            const durasiTiktok = document.getElementById('durasiTiktok').value;
-            const fotoCover = document.getElementById('fotoCover').files[0];
-            const fileAudio = document.getElementById('fileAudio').files[0];
-            
-            if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
-                showError('Harap isi semua field yang diperlukan!');
-                return;
-            }
-            
-            if (fotoCover && fotoCover.size > 5 * 1024 * 1024) {
-                showError('File foto terlalu besar! Maksimal 5MB.');
-                return;
-            }
-            
-            if (fileAudio && fileAudio.size > 20 * 1024 * 1024) {
-                showError('File audio terlalu besar! Maksimal 20MB.');
-                return;
-            }
-            
-            // Tampilkan loading
-            submitBtn.disabled = true;
-            loading.style.display = 'block';
-            
-            try {
-                // Prepare form data
-                const formData = new FormData();
-                formData.append('judulLagu', judulLagu);
-                formData.append('namaArtis', namaArtis);
-                formData.append('durasiTiktok', durasiTiktok);
-                formData.append('artisFeat', document.getElementById('artisFeat').value);
-                formData.append('linkYoutube', document.getElementById('linkYoutube').value);
-                formData.append('fotoCover', fotoCover);
-                formData.append('fileAudio', fileAudio);
-                formData.append('timestamp', new Date().toISOString());
-                
-                console.log('Mengirim data ke:', GOOGLE_SCRIPT_URL);
-                
-                // Send to Google Apps Script
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                console.log('Response dari server:', result);
-                
-                if (result.status === 'success') {
-                    successMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}`;
-                    successMessage.style.display = 'block';
-                    document.getElementById('uploadForm').reset();
-                } else {
-                    throw new Error(result.message || 'Upload gagal');
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showError(error.message || 'Terjadi kesalahan saat mengupload. Coba lagi.');
-            } finally {
-                loading.style.display = 'none';
-                submitBtn.disabled = false;
-            }
-        });
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        function showError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-            errorMessage.style.display = 'block';
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        // Sembunyikan pesan sebelumnya
+        successMessage.style.display = 'none';
+        errorMessage.style.display = 'none';
+        
+        // Validasi
+        const judulLagu = document.getElementById('judulLagu').value;
+        const namaArtis = document.getElementById('namaArtis').value;
+        const durasiTiktok = document.getElementById('durasiTiktok').value;
+        const fotoCover = document.getElementById('fotoCover').files[0];
+        const fileAudio = document.getElementById('fileAudio').files[0];
+        
+        if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
+            showError('Harap isi semua field yang diperlukan!');
+            return;
         }
         
-        // Animasi saat halaman load
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            container.style.opacity = '0';
-            container.style.transform = 'translateY(30px)';
+        if (fotoCover && fotoCover.size > 5 * 1024 * 1024) {
+            showError('File foto terlalu besar! Maksimal 5MB.');
+            return;
+        }
+        
+        if (fileAudio && fileAudio.size > 20 * 1024 * 1024) {
+            showError('File audio terlalu besar! Maksimal 20MB.');
+            return;
+        }
+        
+        // Tampilkan loading
+        submitBtn.disabled = true;
+        loading.style.display = 'block';
+        
+        try {
+            // TEST: Cek koneksi dulu
+            console.log('🔄 Testing connection to:', GOOGLE_SCRIPT_URL);
             
-            setTimeout(() => {
-                container.style.transition = 'all 0.6s ease';
-                container.style.opacity = '1';
-                container.style.transform = 'translateY(0)';
-            }, 200);
-        });
-    </script>
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('judulLagu', judulLagu);
+            formData.append('namaArtis', namaArtis);
+            formData.append('durasiTiktok', durasiTiktok);
+            formData.append('artisFeat', document.getElementById('artisFeat').value);
+            formData.append('linkYoutube', document.getElementById('linkYoutube').value);
+            formData.append('fotoCover', fotoCover);
+            formData.append('fileAudio', fileAudio);
+            formData.append('timestamp', new Date().toISOString());
+            
+            console.log('📤 Sending form data...');
+            
+            // Send to Google Apps Script dengan error handling yang lebih baik
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Cek jika response ok
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('✅ Response dari server:', result);
+            
+            if (result.status === 'success') {
+                successMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}<br>
+                                          <small>Folder: ${result.folderUrl ? '<a href="' + result.folderUrl + '" target="_blank">Lihat di Google Drive</a>' : ''}</small>`;
+                successMessage.style.display = 'block';
+                document.getElementById('uploadForm').reset();
+            } else {
+                throw new Error(result.message || 'Upload gagal');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error details:', error);
+            
+            // Berikan pesan error yang lebih spesifik
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                showError('Gagal terhubung ke server. Periksa koneksi internet atau URL Apps Script.');
+            } else if (error.message.includes('HTTP error')) {
+                showError('Server merespons dengan error: ' + error.message);
+            } else {
+                showError('Terjadi kesalahan: ' + error.message);
+            }
+        } finally {
+            loading.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    });
+    
+    function showError(message) {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+        errorMessage.style.display = 'block';
+    }
+    
+    // Test koneksi saat page load
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('🔍 Testing script connection...');
+        try {
+            // Test dengan GET request sederhana
+            const testResponse = await fetch(GOOGLE_SCRIPT_URL);
+            if (testResponse.ok) {
+                const testResult = await testResponse.json();
+                console.log('✅ Script connection test:', testResult);
+            } else {
+                console.warn('⚠️ Script responded with status:', testResponse.status);
+            }
+        } catch (error) {
+            console.error('❌ Script connection failed:', error);
+        }
+        
+        // Animasi
+        const container = document.querySelector('.container');
+        container.style.opacity = '0';
+        container.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+            container.style.transition = 'all 0.6s ease';
+            container.style.opacity = '1';
+            container.style.transform = 'translateY(0)';
+        }, 200);
+    });
+</script>
 </body>
 </html>
