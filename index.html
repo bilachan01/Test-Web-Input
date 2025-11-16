@@ -278,7 +278,7 @@
                 </li>
                 <li>
                     <i class="fas fa-check-circle"></i>
-                    <span>Foto cover art harus beresolusi minimal 500x500 pixel</span>
+                    <span>Foto cover art harus beresolusi minimal 3000×3000 pixel</span>
                 </li>
                 <li>
                     <i class="fas fa-check-circle"></i>
@@ -342,10 +342,10 @@
             <div class="form-group">
                 <label class="input-label">Upload Foto Cover Art *</label>
                 <span class="input-description">
-                    <i class="fas fa-image"></i> Pilih foto cover art untuk lagu. Format: JPG/PNG, min. 500x500px
+                    <i class="fas fa-image"></i> Pilih foto cover art untuk lagu. Format: JPG/PNG, resolusi minimal 3000×3000 pixel untuk kualitas terbaik
                 </span>
                 <input type="file" id="fotoCover" name="fotoCover" accept="image/*" required>
-                <div class="file-input-info">Format: JPG, PNG, JPEG | Maksimal: 5MB</div>
+                <div class="file-input-info">Format: JPG, PNG, JPEG | Maksimal: 5MB | Minimal: 3000×3000px</div>
             </div>
             
             <!-- Upload File Audio -->
@@ -385,124 +385,107 @@
     </div>
 
     <script>
-    // URL Google Apps Script
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYR625KOyroibXfGvBUf5qD_hm9CDOpRvmAZJObzLNlcq4VLMrJ4Nzx2xcUWxc5m7ZQw/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYR625KOyroibXfGvBUf5qD_hm9CDOpRvmAZJObzLNlcq4VLMrJ4Nzx2xcUWxc5m7ZQw/exec';
 
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const submitBtn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        successMessage.style.display = 'none';
-        errorMessage.style.display = 'none';
-        
-        // Validasi
-        const judulLagu = document.getElementById('judulLagu').value;
-        const namaArtis = document.getElementById('namaArtis').value;
-        const durasiTiktok = document.getElementById('durasiTiktok').value;
-        const fotoCover = document.getElementById('fotoCover').files[0];
-        const fileAudio = document.getElementById('fileAudio').files[0];
-        
-        if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
-            showError('Harap isi semua field yang diperlukan!');
-            return;
-        }
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Validasi
+            const judulLagu = document.getElementById('judulLagu').value;
+            const namaArtis = document.getElementById('namaArtis').value;
+            const durasiTiktok = document.getElementById('durasiTiktok').value;
+            const fotoCover = document.getElementById('fotoCover').files[0];
+            const fileAudio = document.getElementById('fileAudio').files[0];
+            
+            if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
+                showError('Harap isi semua field yang diperlukan!');
+                return;
+            }
 
-        // Tampilkan loading
-        submitBtn.disabled = true;
-        loading.style.display = 'block';
-        
-        try {
-            // Kirim data JSON saja (tanpa file upload dulu)
-            const payload = {
-                judulLagu: judulLagu,
-                namaArtis: namaArtis,
-                durasiTiktok: durasiTiktok,
-                artisFeat: document.getElementById('artisFeat').value,
-                linkYoutube: document.getElementById('linkYoutube').value,
-                timestamp: new Date().toISOString(),
-                // Info file (tanpa upload file sebenarnya)
-                fileInfo: {
+            // Validasi ukuran file
+            if (fotoCover && fotoCover.size > 5 * 1024 * 1024) {
+                showError('File foto terlalu besar! Maksimal 5MB.');
+                return;
+            }
+            
+            if (fileAudio && fileAudio.size > 20 * 1024 * 1024) {
+                showError('File audio terlalu besar! Maksimal 20MB.');
+                return;
+            }
+
+            // Tampilkan loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                // Kirim data sebagai URL parameters
+                const params = new URLSearchParams({
+                    judulLagu: judulLagu,
+                    namaArtis: namaArtis,
+                    durasiTiktok: durasiTiktok,
+                    artisFeat: document.getElementById('artisFeat').value,
+                    linkYoutube: document.getElementById('linkYoutube').value,
                     fotoName: fotoCover.name,
                     audioName: fileAudio.name,
-                    fotoSize: fotoCover.size,
-                    audioSize: fileAudio.size
+                    timestamp: new Date().toISOString()
+                });
+                
+                console.log('📤 Mengirim data:', params.toString());
+                
+                // Kirim sebagai GET request dengan parameters
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?' + params, {
+                    method: 'GET'
+                });
+                
+                const result = await response.json();
+                console.log('✅ Response:', result);
+                
+                if (result.status === 'success') {
+                    successMessage.innerHTML = `
+                        <i class="fas fa-check-circle"></i> ${result.message}<br>
+                        <small>✅ Data berhasil disimpan di Google Drive!</small>
+                    `;
+                    successMessage.style.display = 'block';
+                    document.getElementById('uploadForm').reset();
+                } else {
+                    throw new Error(result.message || 'Upload gagal');
                 }
-            };
-            
-            console.log('📤 Mengirim data:', payload);
-            
-            // Kirim sebagai JSON
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
-            });
-            
-            console.log('✅ Response status:', response.status);
-            
-            const result = await response.json();
-            console.log('📨 Response data:', result);
-            
-            if (result.status === 'success') {
-                successMessage.innerHTML = `
-                    <i class="fas fa-check-circle"></i> ${result.message}<br>
-                    <small>Folder berhasil dibuat di Google Drive!</small>
-                `;
-                successMessage.style.display = 'block';
-                document.getElementById('uploadForm').reset();
-            } else {
-                throw new Error(result.message || 'Upload gagal');
-            }
-            
-        } catch (error) {
-            console.error('❌ Error details:', error);
-            
-            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                showError('Masalah koneksi. Coba buka URL script di browser baru:<br><small>' + GOOGLE_SCRIPT_URL + '</small>');
-            } else {
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
                 showError('Error: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
             }
-        } finally {
-            loading.style.display = 'none';
-            submitBtn.disabled = false;
-        }
-    });
-    
-    function showError(message) {
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-        errorMessage.style.display = 'block';
-    }
-    
-    // Test koneksi saat page load
-    document.addEventListener('DOMContentLoaded', async function() {
-        console.log('🔍 Testing connection to:', GOOGLE_SCRIPT_URL);
+        });
         
-        try {
-            const testResponse = await fetch(GOOGLE_SCRIPT_URL + '?test=' + Date.now());
-            const testText = await testResponse.text();
-            console.log('Connection test result:', testText);
-        } catch (error) {
-            console.error('Connection test failed:', error);
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            errorMessage.style.display = 'block';
         }
         
         // Animasi
-        const container = document.querySelector('.container');
-        container.style.opacity = '0';
-        container.style.transform = 'translateY(30px)';
-        
-        setTimeout(() => {
-            container.style.transition = 'all 0.6s ease';
-            container.style.opacity = '1';
-            container.style.transform = 'translateY(0)';
-        }, 200);
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 200);
+        });
+    </script>
 </body>
 </html>
