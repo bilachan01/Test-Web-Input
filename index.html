@@ -385,8 +385,8 @@
     </div>
 
     <script>
-        // URL Google Apps Script - SUDAH DIUPDATE
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT_ScLYh3YXyQQoh4Mh_NY7mx7ChZzRnaLQMiqsV8DySWtCcrtjdwcvEjcT8qX1dNf4Q/exec';
+        // URL Google Apps Script - SUDAH DIUPDATE DENGAN URL BARU
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNvQ8LOZpX5MKfH9fGQFyoXiDtrSQ6JDrzV4fQnzzeH9z35sMRB8sFeqoUKSoKYO0Cfw/exec';
 
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -438,6 +438,8 @@
                 formData.append('fileAudio', fileAudio);
                 formData.append('timestamp', new Date().toISOString());
                 
+                console.log('Mengirim data ke:', GOOGLE_SCRIPT_URL);
+                
                 // Send to Google Apps Script
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -445,8 +447,10 @@
                 });
                 
                 const result = await response.json();
+                console.log('Response dari server:', result);
                 
                 if (result.status === 'success') {
+                    successMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}`;
                     successMessage.style.display = 'block';
                     document.getElementById('uploadForm').reset();
                 } else {
@@ -455,7 +459,7 @@
                 
             } catch (error) {
                 console.error('Error:', error);
-                showError(error.message || 'Terjadi kesalahan saat mengupload');
+                showError(error.message || 'Terjadi kesalahan saat mengupload. Coba lagi.');
             } finally {
                 loading.style.display = 'none';
                 submitBtn.disabled = false;
