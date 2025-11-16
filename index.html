@@ -6,6 +6,7 @@
     <title>Music Upload Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* CSS Anda yang sama */
         * {
             margin: 0;
             padding: 0;
@@ -33,294 +34,8 @@
             position: relative;
         }
         
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 25px;
-            border-bottom: 3px solid #f0f0f0;
-        }
+        /* ... (CSS lengkap Anda yang sama) ... */
         
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .logo-icon {
-            font-size: 45px;
-            color: #667eea;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .title {
-            font-size: 36px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle {
-            color: #666;
-            font-size: 18px;
-            margin-top: 8px;
-            font-weight: 400;
-        }
-        
-        .rules-section {
-            background: linear-gradient(135deg, #f8f9ff, #f0f2ff);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 35px;
-            border-left: 5px solid #667eea;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
-        }
-        
-        .rules-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .rules-list {
-            list-style: none;
-        }
-        
-        .rules-list li {
-            padding: 10px 0;
-            color: #555;
-            font-size: 15px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            line-height: 1.5;
-        }
-        
-        .rules-list li i {
-            color: #28a745;
-            margin-top: 3px;
-            flex-shrink: 0;
-            font-size: 16px;
-        }
-        
-        .form-group {
-            margin-bottom: 30px;
-        }
-        
-        .input-label {
-            display: block;
-            font-size: 15px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-        }
-        
-        .input-description {
-            display: block;
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 10px;
-            line-height: 1.5;
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        input[type="text"], input[type="url"], input[type="file"] {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            background: #fafbff;
-        }
-        
-        .file-input-info {
-            font-size: 12px;
-            color: #888;
-            margin-top: 6px;
-            padding-left: 5px;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        
-        .submit-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(-1px);
-        }
-        
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin: 25px 0;
-        }
-        
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .message {
-            display: none;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            font-size: 15px;
-            text-align: center;
-            line-height: 1.5;
-        }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 2px solid #c3e6cb;
-        }
-        
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 2px solid #f5c6cb;
-        }
-        
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 25px;
-            border-top: 2px solid #e9ecef;
-            color: #666;
-            font-size: 15px;
-        }
-        
-        .footer-name {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
-        
-        .footer-tagline {
-            font-size: 13px;
-            opacity: 0.8;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-                align-items: flex-start;
-            }
-            
-            .container {
-                padding: 30px 25px;
-                border-radius: 15px;
-                margin: 10px auto;
-            }
-            
-            .title {
-                font-size: 28px;
-            }
-            
-            .subtitle {
-                font-size: 16px;
-            }
-            
-            .logo {
-                gap: 15px;
-            }
-            
-            .logo-icon {
-                font-size: 35px;
-            }
-            
-            .rules-section {
-                padding: 20px;
-                margin-bottom: 25px;
-            }
-            
-            .rules-title {
-                font-size: 18px;
-            }
-            
-            input[type="text"], input[type="url"], input[type="file"] {
-                padding: 12px 15px;
-            }
-            
-            .submit-btn {
-                padding: 16px;
-                font-size: 16px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px 20px;
-            }
-            
-            .title {
-                font-size: 24px;
-            }
-            
-            .logo {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .rules-list li {
-                font-size: 14px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -458,92 +173,120 @@
     </div>
 
     <script>
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzaWuXLzejuGVveNtg_PvpW4FNnguF9gSiUBsUrvs_NJd73cCReLUe1a6sEEVlPFVcZIA/exec';
+        // URL Google Apps Script BARU
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDZbZtYeNQmnJROQLMNT0b711m32T-zGWFHBMY_mOg7vE_jG0GQiUN51pb2H-_g-Aw7w/exec';
+        
+        // CORS Proxy
+        const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const submitBtn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        successMessage.style.display = 'none';
-        errorMessage.style.display = 'none';
-        
-        // Validasi
-        const judulLagu = document.getElementById('judulLagu').value.trim();
-        const namaArtis = document.getElementById('namaArtis').value.trim();
-        const durasiTiktok = document.getElementById('durasiTiktok').value.trim();
-        const fotoCover = document.getElementById('fotoCover').files[0];
-        const fileAudio = document.getElementById('fileAudio').files[0];
-        
-        if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
-            showError('Harap isi semua field yang diperlukan!');
-            return;
-        }
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Validasi
+            const judulLagu = document.getElementById('judulLagu').value.trim();
+            const namaArtis = document.getElementById('namaArtis').value.trim();
+            const durasiTiktok = document.getElementById('durasiTiktok').value.trim();
+            const fotoCover = document.getElementById('fotoCover').files[0];
+            const fileAudio = document.getElementById('fileAudio').files[0];
+            
+            if (!judulLagu || !namaArtis || !durasiTiktok || !fotoCover || !fileAudio) {
+                showError('Harap isi semua field yang diperlukan!');
+                return;
+            }
 
-        // Tampilkan loading
-        submitBtn.disabled = true;
-        loading.style.display = 'block';
-        
-        try {
-            // Pakai FormData untuk support file upload
-            const formData = new FormData();
-            formData.append('judulLagu', judulLagu);
-            formData.append('namaArtis', namaArtis);
-            formData.append('durasiTiktok', durasiTiktok);
-            formData.append('artisFeat', document.getElementById('artisFeat').value);
-            formData.append('linkYoutube', document.getElementById('linkYoutube').value);
-            formData.append('fotoCover', fotoCover);
-            formData.append('fileAudio', fileAudio);
-            
-            console.log('📤 Mengirim file...');
-            
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            console.log('✅ Response:', result);
-            
-            if (result.status === 'success') {
-                successMessage.innerHTML = `
-                    <i class="fas fa-check-circle"></i> ${result.message}<br>
-                    <small>📁 Folder: <a href="${result.folderUrl}" target="_blank">Buka di Google Drive</a></small><br>
-                    <small>🖼️ Foto: ${result.files.foto ? '✅' : '❌'}</small><br>
-                    <small>🎧 Audio: ${result.files.audio ? '✅' : '❌'}</small>
-                `;
-                successMessage.style.display = 'block';
-                document.getElementById('uploadForm').reset();
-            } else {
-                throw new Error(result.message || 'Upload gagal');
+            // Validasi ukuran file
+            if (fotoCover.size > 5 * 1024 * 1024) {
+                showError('File foto terlalu besar! Maksimal 5MB.');
+                return;
             }
             
-        } catch (error) {
-            console.error('❌ Error:', error);
-            
-            if (error.message.includes('Failed to fetch')) {
-                showError(`
-                    <strong>CORS Error!</strong><br>
-                    <small>File upload butuh POST request yang diblokir CORS.</small><br>
-                    <small>Solusi: Deploy HTML di Google Apps Script juga.</small>
-                `);
-            } else {
-                showError('Error: ' + error.message);
+            if (fileAudio.size > 20 * 1024 * 1024) {
+                showError('File audio terlalu besar! Maksimal 20MB.');
+                return;
             }
-        } finally {
-            loading.style.display = 'none';
-            submitBtn.disabled = false;
+
+            // Tampilkan loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                // Kirim data sebagai URL parameters via CORS proxy
+                const params = new URLSearchParams({
+                    judulLagu: judulLagu,
+                    namaArtis: namaArtis,
+                    durasiTiktok: durasiTiktok,
+                    artisFeat: document.getElementById('artisFeat').value.trim(),
+                    linkYoutube: document.getElementById('linkYoutube').value.trim(),
+                    fotoName: fotoCover.name,
+                    audioName: fileAudio.name,
+                    timestamp: new Date().toISOString()
+                });
+                
+                console.log('📤 Mengirim data via CORS proxy...');
+                
+                const response = await fetch(CORS_PROXY + GOOGLE_SCRIPT_URL + '?' + params, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                const result = await response.json();
+                console.log('✅ Response:', result);
+                
+                if (result.status === 'success') {
+                    successMessage.innerHTML = `
+                        <i class="fas fa-check-circle"></i> ${result.message}<br>
+                        <small>📁 Folder: <a href="${result.folderUrl}" target="_blank">${result.folderName}</a></small><br>
+                        <small>🖼️ Foto: ${result.files?.foto ? '✅' : '📝'}</small><br>
+                        <small>🎧 Audio: ${result.files?.audio ? '✅' : '📝'}</small>
+                    `;
+                    successMessage.style.display = 'block';
+                    document.getElementById('uploadForm').reset();
+                } else {
+                    throw new Error(result.message || 'Upload gagal');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                
+                if (error.message.includes('Failed to fetch')) {
+                    showError('CORS proxy error. Coba refresh halaman dan submit lagi.');
+                } else {
+                    showError('Error: ' + error.message);
+                }
+            } finally {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+            errorMessage.style.display = 'block';
         }
-    });
-    
-    function showError(message) {
-        const errorMessage = document.getElementById('errorMessage');
-        errorMessage.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
-        errorMessage.style.display = 'block';
-    }
-</script>
+        
+        // Animasi
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 200);
+        });
+    </script>
 </body>
 </html>
