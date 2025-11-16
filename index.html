@@ -385,7 +385,7 @@
     </div>
 
     <script>
-    // URL Google Apps Script - SUDAH DIUPDATE DENGAN URL BARU
+    // URL Google Apps Script
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYR625KOyroibXfGvBUf5qD_hm9CDOpRvmAZJObzLNlcq4VLMrJ4Nzx2xcUWxc5m7ZQw/exec';
 
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
@@ -396,7 +396,6 @@
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         
-        // Sembunyikan pesan sebelumnya
         successMessage.style.display = 'none';
         errorMessage.style.display = 'none';
         
@@ -411,55 +410,50 @@
             showError('Harap isi semua field yang diperlukan!');
             return;
         }
-        
-        if (fotoCover && fotoCover.size > 5 * 1024 * 1024) {
-            showError('File foto terlalu besar! Maksimal 5MB.');
-            return;
-        }
-        
-        if (fileAudio && fileAudio.size > 20 * 1024 * 1024) {
-            showError('File audio terlalu besar! Maksimal 20MB.');
-            return;
-        }
-        
+
         // Tampilkan loading
         submitBtn.disabled = true;
         loading.style.display = 'block';
         
         try {
-            // TEST: Cek koneksi dulu
-            console.log('🔄 Testing connection to:', GOOGLE_SCRIPT_URL);
+            // Kirim data JSON saja (tanpa file upload dulu)
+            const payload = {
+                judulLagu: judulLagu,
+                namaArtis: namaArtis,
+                durasiTiktok: durasiTiktok,
+                artisFeat: document.getElementById('artisFeat').value,
+                linkYoutube: document.getElementById('linkYoutube').value,
+                timestamp: new Date().toISOString(),
+                // Info file (tanpa upload file sebenarnya)
+                fileInfo: {
+                    fotoName: fotoCover.name,
+                    audioName: fileAudio.name,
+                    fotoSize: fotoCover.size,
+                    audioSize: fileAudio.size
+                }
+            };
             
-            // Prepare form data
-            const formData = new FormData();
-            formData.append('judulLagu', judulLagu);
-            formData.append('namaArtis', namaArtis);
-            formData.append('durasiTiktok', durasiTiktok);
-            formData.append('artisFeat', document.getElementById('artisFeat').value);
-            formData.append('linkYoutube', document.getElementById('linkYoutube').value);
-            formData.append('fotoCover', fotoCover);
-            formData.append('fileAudio', fileAudio);
-            formData.append('timestamp', new Date().toISOString());
+            console.log('📤 Mengirim data:', payload);
             
-            console.log('📤 Sending form data...');
-            
-            // Send to Google Apps Script dengan error handling yang lebih baik
+            // Kirim sebagai JSON
             const response = await fetch(GOOGLE_SCRIPT_URL, {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
             });
             
-            // Cek jika response ok
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            console.log('✅ Response status:', response.status);
             
             const result = await response.json();
-            console.log('✅ Response dari server:', result);
+            console.log('📨 Response data:', result);
             
             if (result.status === 'success') {
-                successMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${result.message}<br>
-                                          <small>Folder: ${result.folderUrl ? '<a href="' + result.folderUrl + '" target="_blank">Lihat di Google Drive</a>' : ''}</small>`;
+                successMessage.innerHTML = `
+                    <i class="fas fa-check-circle"></i> ${result.message}<br>
+                    <small>Folder berhasil dibuat di Google Drive!</small>
+                `;
                 successMessage.style.display = 'block';
                 document.getElementById('uploadForm').reset();
             } else {
@@ -469,13 +463,10 @@
         } catch (error) {
             console.error('❌ Error details:', error);
             
-            // Berikan pesan error yang lebih spesifik
             if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-                showError('Gagal terhubung ke server. Periksa koneksi internet atau URL Apps Script.');
-            } else if (error.message.includes('HTTP error')) {
-                showError('Server merespons dengan error: ' + error.message);
+                showError('Masalah koneksi. Coba buka URL script di browser baru:<br><small>' + GOOGLE_SCRIPT_URL + '</small>');
             } else {
-                showError('Terjadi kesalahan: ' + error.message);
+                showError('Error: ' + error.message);
             }
         } finally {
             loading.style.display = 'none';
@@ -491,18 +482,14 @@
     
     // Test koneksi saat page load
     document.addEventListener('DOMContentLoaded', async function() {
-        console.log('🔍 Testing script connection...');
+        console.log('🔍 Testing connection to:', GOOGLE_SCRIPT_URL);
+        
         try {
-            // Test dengan GET request sederhana
-            const testResponse = await fetch(GOOGLE_SCRIPT_URL);
-            if (testResponse.ok) {
-                const testResult = await testResponse.json();
-                console.log('✅ Script connection test:', testResult);
-            } else {
-                console.warn('⚠️ Script responded with status:', testResponse.status);
-            }
+            const testResponse = await fetch(GOOGLE_SCRIPT_URL + '?test=' + Date.now());
+            const testText = await testResponse.text();
+            console.log('Connection test result:', testText);
         } catch (error) {
-            console.error('❌ Script connection failed:', error);
+            console.error('Connection test failed:', error);
         }
         
         // Animasi
